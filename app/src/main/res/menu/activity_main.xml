@@ -1,0 +1,8 @@
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@+id/menu_refresh" android:orderInCategory="3" android:title="Push To DB"/>
+    <item android:id="@+id/connect_button" android:orderInCategory="1" android:title="Connect TCP"/>
+    <item android:id="@+id/disconnect_button" android:orderInCategory="2" android:title="Disconnect TCP" android:enabled="false"/>
+
+</menu>

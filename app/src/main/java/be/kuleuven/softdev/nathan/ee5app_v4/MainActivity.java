@@ -6,6 +6,8 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private Button disconnectButton;
 
     private MobileServiceClient mDbClient;
-    private MobileServiceTable<ToDoItem> mToDoTable;
+   // private MobileServiceTable<ToDoItem> mToDoTable;
     private ProgressBar mProgressBar;
     private MobileServiceSyncTable<ToDoItem> mToDoTable;
 
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Get the remote table instance to use.
-        mToDoTable = mDbClient.getTable(ToDoItem.class);
+        //mToDoTable = mDbClient.getTable(ToDoItem.class);
 
         //Offline sync table instance.
         mToDoTable = mDbClient.getSyncTable("ToDoItem", ToDoItem.class);
@@ -114,14 +116,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // this method is executed when the connect button is pressed
-    public void connect(View view){
+    public void connect(){
         new ConnectTask().execute();
         connectButton.setEnabled(false);
         disconnectButton.setEnabled(true);
     }
 
     //this method is executed when the disconnect button is pressed
-    public void disconnect(View view){
+    public void disconnect(){
         if (mTcpClient != null) {
             arrayList.add("DISCONNECTED FROM SERVER!");
             mAdapter.notifyDataSetChanged();
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     public void send(View view){
         // if there is no connection yet, try to connect first
         if(mTcpClient == null){
-            connect(findViewById(android.R.id.content));
+            connect();
         }
 
         String message = editText.getText().toString();
@@ -185,13 +187,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Mark an item as completed in the Mobile Service Table
-     *
-     * @param item
-     *            The item to mark
+     * Initializes the activity menu
      */
-    public void checkItemInTable(ToDoItem item) throws ExecutionException, InterruptedException {
-        mToDoTable.update(item).get();
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+
+    /**
+     * Select an option from the menu
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_refresh) {
+            refreshItemsFromTable();
+        }
+        if (item.getItemId() == R.id.connect_button) {
+            connect();
+        }
+        if (item.getItemId() == R.id.disconnect_button) {
+            disconnect();
+        }
+        return true;
     }
 
     /**
@@ -219,13 +237,15 @@ public class MainActivity extends AppCompatActivity {
                     final ToDoItem entity = addItemInTable(item);
 
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    e.printStackTrace();
                 }
                 return null;
             }
         };
 
         runAsyncTask(task);
+        editText.setText("");
+
     }
 
     /**
@@ -252,13 +272,13 @@ public class MainActivity extends AppCompatActivity {
             protected Void doInBackground(Void... params) {
 
                 try {
-                    final List<ToDoItem> results = refreshItemsFromMobileServiceTable();
+                    //final List<ToDoItem> results = refreshItemsFromMobileServiceTable();
 
                     //Offline Sync
-                    //final List<ToDoItem> results = refreshItemsFromMobileServiceTableSyncTable();
+                    final List<ToDoItem> results = refreshItemsFromMobileServiceTableSyncTable();
 
                 } catch (final Exception e){
-                    createAndShowDialogFromTask(e, "Error");
+                    e.printStackTrace();
                 }
 
                 return null;
@@ -272,10 +292,10 @@ public class MainActivity extends AppCompatActivity {
      * Refresh the list with the items in the Mobile Service Table
      */
 
-    private List<ToDoItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
+    /*private List<ToDoItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
         return mToDoTable.where().field("complete").
                 eq(val(false)).execute().get();
-    }
+    }*/
 
     /**
      * Refresh the list with the items in the Mobile Service Sync Table
@@ -321,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                     syncContext.initialize(localStore, handler).get();
 
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    e.printStackTrace();
                 }
 
                 return null;
@@ -345,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
                     syncContext.push().get();
                     mToDoTable.pull(null).get();
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    e.printStackTrace();
                 }
                 return null;
             }
