@@ -4,28 +4,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <LinearLayout android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="top">
-
-        <!-- connect button -->
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/connect_button"
-            android:layout_gravity="center_vertical"
-            android:text="connect"
-            android:onClick="connect"/>
-
-        <!-- disconnect button -->
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/disconnect_button"
-            android:layout_gravity="center_vertical"
-            android:text="disconnect"
-            android:onClick="disconnect"/>
-    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="right|center_vertical" />
 
     <ListView android:id="@+id/list"
         android:layout_width="fill_parent"
@@ -54,8 +37,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/send_button"
             android:layout_gravity="center_vertical"
-            android:text="send"
+            android:text="send TCP"
             android:onClick="send"/>
+
+        <Button
+            android:id="@+id/buttonAddToDb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:onClick="addItem"
+            android:text="add to DB" />
 
     </LinearLayout>
 </LinearLayout>
